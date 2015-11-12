@@ -4,12 +4,12 @@ MAINTAINER Matt Bentley <mbentley@mbentley.net>
 # Install pre-reqs
 RUN (apt-get update && apt-get install -y openjdk-7-jre wget)
 
-# Install the official subsonic 5.2.1 .deb and add subsonic.war from https://github.com/EugeneKay/subsonic
-RUN (wget "http://sourceforge.net/projects/subsonic/files/subsonic/5.2.1/subsonic-5.2.1.deb/download" -O /tmp/subsonic-5.2.1.deb &&\
-  dpkg -i /tmp/subsonic-5.2.1.deb &&\
+# Install the official subsonic 5.3 .deb and add subsonic.war from https://github.com/EugeneKay/subsonic
+RUN (wget "http://sourceforge.net/projects/subsonic/files/subsonic/5.3/subsonic-5.3.deb/download" -O /tmp/subsonic-5.3.deb &&\
+  dpkg -i /tmp/subsonic-5.3.deb &&\
   useradd subsonic &&\
-  rm /tmp/subsonic-5.2.1.deb &&\
-  wget "https://github.com/EugeneKay/subsonic/releases/download/v5.2.1-kang/subsonic-v5.2.1.war" -O /usr/share/subsonic/subsonic.war)
+  rm /tmp/subsonic-5.3.deb &&\
+  wget "https://github.com/EugeneKay/subsonic/releases/download/v5.3-kang/subsonic-v5.3-kang.war" -O /usr/share/subsonic/subsonic.war)
 
 USER subsonic
 WORKDIR /usr/share/subsonic
