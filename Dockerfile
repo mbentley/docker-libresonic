@@ -17,12 +17,16 @@ RUN (apk --update add wget && rm -rf /var/cache/apk/* &&\
 # create data directories and symlinks to make it easier to use a volume
 RUN (mkdir /data &&\
   cd /data &&\
-  mkdir db jetty lucene2 &&\
+  mkdir db jetty lucene2 lastfmcache playlists thumbs transcode &&\
   touch subsonic.properties subsonic.log &&\
   cd /var/subsonic &&\
   ln -s /data/db &&\
   ln -s /data/jetty &&\
   ln -s /data/lucene2 &&\
+  ln -s /data/lastfmcache &&\
+  ln -s /data/playlists &&\
+  ln -s /data/thumbs &&\
+  ln -s /data/transcode &&\
   ln -s /data/subsonic.properties &&\
   ln -s /data/subsonic.log &&\
   chown -R subsonic:subsonic /data)
