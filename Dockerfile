@@ -10,6 +10,7 @@ RUN (apk --update add wget && rm -rf /var/cache/apk/* &&\
   mkdir /var/subsonic &&\
   tar zxf /tmp/subsonic.tar.gz -C /var/subsonic &&\
   rm /tmp/subsonic.tar.gz &&\
+  wget "https://github.com/EugeneKay/subsonic/releases/download/v5.3-kang/subsonic-v5.3-kang.war" -O /var/subsonic/subsonic.war &&\
   apk del wget &&\
   adduser -h /var/subsonic -D subsonic &&\
   chown -R subsonic:subsonic /var/subsonic)
