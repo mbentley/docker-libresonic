@@ -1,19 +1,35 @@
-FROM debian:jessie
+FROM alpine:latest
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
-# Install pre-reqs
-RUN (apt-get update && apt-get install -y openjdk-7-jre wget)
+# install ca-certificates and java7
+RUN (apk --update add ca-certificates openjdk7-jre-base && rm -rf /var/cache/apk/*)
 
-# Install the official subsonic 5.3 .deb and add subsonic.war from https://github.com/EugeneKay/subsonic
-RUN (wget "http://sourceforge.net/projects/subsonic/files/subsonic/5.3/subsonic-5.3.deb/download" -O /tmp/subsonic-5.3.deb &&\
-  dpkg -i /tmp/subsonic-5.3.deb &&\
-  useradd subsonic &&\
-  rm /tmp/subsonic-5.3.deb &&\
-  wget "https://github.com/EugeneKay/subsonic/releases/download/v5.3-kang/subsonic-v5.3-kang.war" -O /usr/share/subsonic/subsonic.war)
+# Install the official subsonic 5.3 standalone package and add subsonic.war from https://github.com/EugeneKay/subsonic
+RUN (apk --update add wget && rm -rf /var/cache/apk/* &&\
+  wget "http://sourceforge.net/projects/subsonic/files/subsonic/5.3/subsonic-5.3-standalone.tar.gz/download" -O /tmp/subsonic.tar.gz &&\
+  mkdir /var/subsonic &&\
+  tar zxf /tmp/subsonic.tar.gz -C /var/subsonic &&\
+  rm /tmp/subsonic.tar.gz &&\
+  apk del wget &&\
+  adduser -h /var/subsonic -D subsonic &&\
+  chown -R subsonic:subsonic /var/subsonic)
+
+# create data directories and symlinks to make it easier to use a volume
+RUN (mkdir /data &&\
+  cd /data &&\
+  mkdir db jetty lucene2 &&\
+  touch subsonic.properties subsonic.log &&\
+  cd /var/subsonic &&\
+  ln -s /data/db &&\
+  ln -s /data/jetty &&\
+  ln -s /data/lucene2 &&\
+  ln -s /data/subsonic.properties &&\
+  ln -s /data/subsonic.log &&\
+  chown -R subsonic:subsonic /data)
 
 USER subsonic
-WORKDIR /usr/share/subsonic
-EXPOSE 4040
-VOLUME ["/var/subsonic"]
+WORKDIR /var/subsonic
+EXPOSE 4040 4443
+VOLUME ["/data"]
 
-ENTRYPOINT ["java","-Xmx1024m","-Dsubsonic.home=/var/subsonic","-Dsubsonic.host=0.0.0.0","-Dsubsonic.port=4040","-Dsubsonic.httpsPort=4443","-Dsubsonic.contextPath=/","-Dsubsonic.defaultMusicFolder=/var/music","-Dsubsonic.defaultPodcastFolder=/var/music/Podcast","-Dsubsonic.defaultPlaylistFolder=/var/playlists","-Djava.awt.headless=true","-verbose:gc","-jar","subsonic-booter-jar-with-dependencies.jar"]
+CMD ["java","-Xmx1024m","-Dsubsonic.home=/var/subsonic","-Dsubsonic.host=0.0.0.0","-Dsubsonic.port=4040","-Dsubsonic.httpsPort=4443","-Dsubsonic.contextPath=/","-Dsubsonic.defaultMusicFolder=/var/music","-Dsubsonic.defaultPodcastFolder=/var/music/Podcast","-Dsubsonic.defaultPlaylistFolder=/var/playlists","-Djava.awt.headless=true","-jar","subsonic-booter-jar-with-dependencies.jar"]
