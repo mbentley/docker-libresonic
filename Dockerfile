@@ -1,8 +1,8 @@
 FROM alpine:latest
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
-# install ca-certificates and java7
-RUN (apk --update add ca-certificates openjdk7-jre-base && rm -rf /var/cache/apk/*)
+# install ca-certificates, ffmpeg, and java7
+RUN (apk --update add ca-certificates ffmpeg openjdk7-jre-base && rm -rf /var/cache/apk/*)
 
 # Install the official subsonic 5.3 standalone package and add subsonic.war from https://github.com/EugeneKay/subsonic
 RUN (apk --update add wget && rm -rf /var/cache/apk/* &&\
@@ -14,10 +14,15 @@ RUN (apk --update add wget && rm -rf /var/cache/apk/* &&\
   adduser -h /var/subsonic -D subsonic &&\
   chown -R subsonic:subsonic /var/subsonic)
 
+# create transcode folder and add ffmpeg
+RUN (mkdir /var/subsonic/transcode &&\
+  ln -s /usr/bin/ffmpeg /var/subsonic/transcode/ffmpeg &&\
+  chown -R subsonic:subsonic /var/subsonic/transcode)
+
 # create data directories and symlinks to make it easier to use a volume
 RUN (mkdir /data &&\
   cd /data &&\
-  mkdir db jetty lucene2 lastfmcache thumbs transcode music Podcast playlists &&\
+  mkdir db jetty lucene2 lastfmcache thumbs music Podcast playlists &&\
   touch subsonic.properties subsonic.log &&\
   cd /var/subsonic &&\
   ln -s /data/db &&\
@@ -25,7 +30,6 @@ RUN (mkdir /data &&\
   ln -s /data/lucene2 &&\
   ln -s /data/lastfmcache &&\
   ln -s /data/thumbs &&\
-  ln -s /data/transcode &&\
   ln -s /data/music &&\
   ln -s /data/Podcast &&\
   ln -s /data/playlists &&\
