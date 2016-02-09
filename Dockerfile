@@ -17,16 +17,18 @@ RUN (apk --update add wget && rm -rf /var/cache/apk/* &&\
 # create data directories and symlinks to make it easier to use a volume
 RUN (mkdir /data &&\
   cd /data &&\
-  mkdir db jetty lucene2 lastfmcache playlists thumbs transcode &&\
+  mkdir db jetty lucene2 lastfmcache thumbs transcode music Podcast playlists &&\
   touch subsonic.properties subsonic.log &&\
   cd /var/subsonic &&\
   ln -s /data/db &&\
   ln -s /data/jetty &&\
   ln -s /data/lucene2 &&\
   ln -s /data/lastfmcache &&\
-  ln -s /data/playlists &&\
   ln -s /data/thumbs &&\
   ln -s /data/transcode &&\
+  ln -s /data/music &&\
+  ln -s /data/Podcast &&\
+  ln -s /data/playlists &&\
   ln -s /data/subsonic.properties &&\
   ln -s /data/subsonic.log &&\
   chown -R subsonic:subsonic /data)
@@ -36,4 +38,4 @@ WORKDIR /var/subsonic
 EXPOSE 4040 4443
 VOLUME ["/data"]
 
-CMD ["java","-Xmx1024m","-Dsubsonic.home=/var/subsonic","-Dsubsonic.host=0.0.0.0","-Dsubsonic.port=4040","-Dsubsonic.httpsPort=4443","-Dsubsonic.contextPath=/","-Dsubsonic.defaultMusicFolder=/var/music","-Dsubsonic.defaultPodcastFolder=/var/music/Podcast","-Dsubsonic.defaultPlaylistFolder=/var/playlists","-Djava.awt.headless=true","-jar","subsonic-booter-jar-with-dependencies.jar"]
+CMD ["java","-Xmx1024m","-Dsubsonic.home=/var/subsonic","-Dsubsonic.host=0.0.0.0","-Dsubsonic.port=4040","-Dsubsonic.httpsPort=4443","-Dsubsonic.contextPath=/","-Dsubsonic.defaultMusicFolder=/data/music","-Dsubsonic.defaultPodcastFolder=/data/Podcast","-Dsubsonic.defaultPlaylistFolder=/data/playlists","-Djava.awt.headless=true","-jar","subsonic-booter-jar-with-dependencies.jar"]
