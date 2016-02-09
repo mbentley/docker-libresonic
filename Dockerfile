@@ -2,10 +2,10 @@ FROM alpine:latest
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # install ca-certificates, ffmpeg, and java7
-RUN (apk --update add ca-certificates ffmpeg openjdk7-jre-base && rm -rf /var/cache/apk/*)
+RUN (apk --no-cache add ca-certificates ffmpeg openjdk7-jre-base)
 
 # Install the official subsonic 5.3 standalone package and add subsonic.war from https://github.com/EugeneKay/subsonic
-RUN (apk --update add wget && rm -rf /var/cache/apk/* &&\
+RUN (apk --no-cache add wget &&\
   wget "http://sourceforge.net/projects/subsonic/files/subsonic/5.3/subsonic-5.3-standalone.tar.gz/download" -O /tmp/subsonic.tar.gz &&\
   mkdir /var/subsonic &&\
   tar zxf /tmp/subsonic.tar.gz -C /var/subsonic &&\
