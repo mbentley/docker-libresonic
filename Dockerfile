@@ -4,13 +4,13 @@ MAINTAINER Matt Bentley <mbentley@mbentley.net>
 # install ca-certificates, ffmpeg, and java7
 RUN (apk --no-cache add ca-certificates ffmpeg openjdk7-jre-base)
 
-# Install the official subsonic 5.3 standalone package and add subsonic.war from https://github.com/EugeneKay/subsonic
+# Install the official subsonic 5.3 standalone package and add subsonic.war from https://github.com/Libresonic/libresonic
 RUN (apk --no-cache add wget &&\
   wget "http://sourceforge.net/projects/subsonic/files/subsonic/5.3/subsonic-5.3-standalone.tar.gz/download" -O /tmp/subsonic.tar.gz &&\
   mkdir /var/subsonic &&\
   tar zxf /tmp/subsonic.tar.gz -C /var/subsonic &&\
   rm /tmp/subsonic.tar.gz &&\
-  wget "https://github.com/EugeneKay/subsonic/releases/download/v5.3-kang/subsonic-v5.3-kang.war" -O /var/subsonic/subsonic.war &&\
+  wget "https://github.com/Libresonic/libresonic/releases/download/v6.0.1/libresonic-v6.0.1.war" -O /var/subsonic/subsonic.war &&\
   apk del wget &&\
   adduser -h /var/subsonic -D subsonic &&\
   chown -R subsonic:subsonic /var/subsonic)
