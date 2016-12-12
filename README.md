@@ -1,7 +1,7 @@
 mbentley/subsonic
 =================
 
-docker image for subsonic; utilizes libre subsonic from https://github.com/EugeneKay/subsonic
+docker image for subsonic; utilizes libresonic from https://github.com/Libresonic/libresonic
 
 To pull this image:
 `docker pull mbentley/subsonic`
