@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.5
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # install ca-certificates, ffmpeg, and java7
