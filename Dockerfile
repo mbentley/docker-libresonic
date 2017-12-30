@@ -12,7 +12,8 @@ RUN (apk --no-cache add wget &&\
   rm /tmp/subsonic.tar.gz &&\
   wget "https://github.com/Libresonic/libresonic/releases/download/v6.0.1/libresonic-v6.0.1.war" -O /var/subsonic/subsonic.war &&\
   apk del wget &&\
-  adduser -h /var/subsonic -D subsonic &&\
+  addgroup -g 504 subsonic &&\
+  adduser -h /var/subsonic -D -u 504 -g subsonic -G subsonic -s /sbin/nologin subsonic &&\
   chown -R subsonic:subsonic /var/subsonic)
 
 # create transcode folder and add ffmpeg
