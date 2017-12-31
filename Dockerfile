@@ -1,47 +1,62 @@
-FROM alpine:3.5
+FROM alpine:latest
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # install ca-certificates, ffmpeg, and java7
-RUN (apk --no-cache add ca-certificates ffmpeg openjdk7-jre-base)
+RUN (apk --no-cache add ca-certificates ffmpeg openjdk8-jre-base)
 
-# Install the official subsonic 5.3 standalone package and add subsonic.war from https://github.com/Libresonic/libresonic
-RUN (apk --no-cache add wget &&\
-  wget "http://sourceforge.net/projects/subsonic/files/subsonic/5.3/subsonic-5.3-standalone.tar.gz/download" -O /tmp/subsonic.tar.gz &&\
-  mkdir /var/subsonic &&\
-  tar zxf /tmp/subsonic.tar.gz -C /var/subsonic &&\
-  rm /tmp/subsonic.tar.gz &&\
-  wget "https://github.com/Libresonic/libresonic/releases/download/v6.0.1/libresonic-v6.0.1.war" -O /var/subsonic/subsonic.war &&\
-  apk del wget &&\
-  addgroup -g 504 subsonic &&\
-  adduser -h /var/subsonic -D -u 504 -g subsonic -G subsonic -s /sbin/nologin subsonic &&\
-  chown -R subsonic:subsonic /var/subsonic)
+# set tomcat version
+ENV TOMCATVER=8.5.9
+
+# set libresonci version
+ENV LIBRESONICVER=6.2
+
+# create libresonic user
+RUN (mkdir /var/libresonic &&\
+  addgroup -g 504 libresonic &&\
+  adduser -h /var/libresonic -D -u 504 -g libresonic -G libresonic -s /sbin/nologin libresonic &&\
+  chown -R libresonic:libresonic /var/libresonic)
+
+# install tomcat
+RUN (mkdir /opt &&\
+  apk --no-cache add wget &&\
+  wget -O /tmp/tomcat8.tar.gz http://archive.apache.org/dist/tomcat/tomcat-8/v${TOMCATVER}/bin/apache-tomcat-${TOMCATVER}.tar.gz &&\
+  cd /opt &&\
+  tar zxf /tmp/tomcat8.tar.gz && \
+  mv /opt/apache-tomcat* /opt/tomcat && \
+  rm /tmp/tomcat8.tar.gz &&\
+  rm -rf /opt/tomcat/webapps/* &&\
+  chown -R libresonic:libresonic /opt/tomcat)
+
+# install libresonic.war from https://github.com/Libresonic/libresonic
+RUN (wget "https://github.com/Libresonic/libresonic/releases/download/v${LIBRESONICVER}/libresonic-v${LIBRESONICVER}.war" -O /opt/tomcat/webapps/ROOT.war &&\
+  chown libresonic:libresonic /opt/tomcat/webapps/ROOT.war)
 
 # create transcode folder and add ffmpeg
-RUN (mkdir /var/subsonic/transcode &&\
-  ln -s /usr/bin/ffmpeg /var/subsonic/transcode/ffmpeg &&\
-  chown -R subsonic:subsonic /var/subsonic/transcode)
+RUN (mkdir /var/libresonic/transcode &&\
+  ln -s /usr/bin/ffmpeg /var/libresonic/transcode/ffmpeg &&\
+  chown -R libresonic:libresonic /var/libresonic/transcode)
 
 # create data directories and symlinks to make it easier to use a volume
 RUN (mkdir /data &&\
   cd /data &&\
-  mkdir db jetty lucene2 lastfmcache thumbs music Podcast playlists &&\
-  touch subsonic.properties subsonic.log &&\
-  cd /var/subsonic &&\
+  mkdir db lucene2 lastfmcache thumbs music Podcast playlists &&\
+  touch libresonic.properties libresonic.log rollback.sql &&\
+  cd /var/libresonic &&\
   ln -s /data/db &&\
-  ln -s /data/jetty &&\
   ln -s /data/lucene2 &&\
   ln -s /data/lastfmcache &&\
   ln -s /data/thumbs &&\
   ln -s /data/music &&\
   ln -s /data/Podcast &&\
   ln -s /data/playlists &&\
-  ln -s /data/subsonic.properties &&\
-  ln -s /data/subsonic.log &&\
-  chown -R subsonic:subsonic /data)
+  ln -s /data/libresonic.properties &&\
+  ln -s /data/libresonic.log &&\
+  ln -s /data/rollback.sql &&\
+  chown -R libresonic:libresonic /data)
 
-USER subsonic
-WORKDIR /var/subsonic
-EXPOSE 4040 4443
+USER libresonic
+WORKDIR /var/libresonic
+EXPOSE 8080
 VOLUME ["/data"]
 
-CMD ["java","-Xmx1024m","-Dsubsonic.home=/var/subsonic","-Dsubsonic.host=0.0.0.0","-Dsubsonic.port=4040","-Dsubsonic.httpsPort=4443","-Dsubsonic.contextPath=/","-Dsubsonic.defaultMusicFolder=/data/music","-Dsubsonic.defaultPodcastFolder=/data/Podcast","-Dsubsonic.defaultPlaylistFolder=/data/playlists","-Djava.awt.headless=true","-jar","subsonic-booter-jar-with-dependencies.jar"]
+CMD ["/opt/tomcat/bin/catalina.sh","run"]
