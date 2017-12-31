@@ -5,10 +5,13 @@ MAINTAINER Matt Bentley <mbentley@mbentley.net>
 RUN (apk --no-cache add ca-certificates ffmpeg openjdk8-jre-base)
 
 # set tomcat version
-ENV TOMCATVER=8.5.9
+ENV TOMCATVER="8.5.9"
 
 # set libresonci version
-ENV LIBRESONICVER=6.2
+ENV LIBRESONICVER="6.2"
+
+# set default CATALINA_OPTS
+ENV CATALINA_OPTS="-Xmx1024m -Djava.awt.headless=true"
 
 # create libresonic user
 RUN (mkdir /var/libresonic &&\
