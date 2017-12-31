@@ -42,7 +42,7 @@ RUN (mkdir /var/libresonic/transcode &&\
 # create data directories and symlinks to make it easier to use a volume
 RUN (mkdir /data &&\
   cd /data &&\
-  mkdir db lucene2 lastfmcache thumbs music Podcast playlists &&\
+  mkdir db lucene2 lastfmcache thumbs music Podcast playlists .cache .java &&\
   touch libresonic.properties libresonic.log rollback.sql &&\
   cd /var/libresonic &&\
   ln -s /data/db &&\
@@ -52,6 +52,8 @@ RUN (mkdir /data &&\
   ln -s /data/music &&\
   ln -s /data/Podcast &&\
   ln -s /data/playlists &&\
+  ln -s /data/.cache &&\
+  ln -s /data/.java &&\
   ln -s /data/libresonic.properties &&\
   ln -s /data/libresonic.log &&\
   ln -s /data/rollback.sql &&\
