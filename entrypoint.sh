@@ -18,7 +18,7 @@ for DIR in db lucene2 lastfmcache thumbs music Podcast playlists .cache .java
 do
   if [ ! -d "${DIR}" ]
   then
-    printf "WARN - %s missing; creating..." ${DIR}
+    printf "WARN - %s directory missing; creating..." ${DIR}
     mkdir "${DIR}"
     echo "done"
   else
@@ -30,7 +30,7 @@ for FILE in libresonic.properties libresonic.log rollback.sql
 do
   if [ ! -f "${FILE}" ]
   then
-    printf "WARN - %s missing; creating..." ${FILE}
+    printf "WARN - %s file missing; creating..." ${FILE}
     touch "${FILE}"
     echo "done"
   else
