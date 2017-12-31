@@ -1,10 +1,10 @@
-mbentley/subsonic
-=================
+mbentley/libresonic
+===================
 
-docker image for subsonic; utilizes libresonic from https://github.com/Libresonic/libresonic
+docker image for libresonic (https://github.com/Libresonic/libresonic); fork of subsonic
 
 To pull this image:
-`docker pull mbentley/subsonic`
+`docker pull mbentley/libresonic`
 
 Example usage:
-`docker run -d -p 4040:4040 -p 4443:4443 -v /data/subsonic:/data --name subsonic mbentley/subsonic`
+`docker run -d -p 8080:8080 -v /data/libresonic:/data --name libresonic mbentley/libresonic`
