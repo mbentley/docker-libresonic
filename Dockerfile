@@ -2,7 +2,7 @@ FROM alpine:latest
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 # install ca-certificates, ffmpeg, and java7
-RUN (apk --no-cache add ca-certificates ffmpeg openjdk8-jre-base)
+RUN (apk --no-cache add ca-certificates ffmpeg ttf-dejavu openjdk8)
 
 # set tomcat version
 ENV TOMCATVER="8.5.9"
