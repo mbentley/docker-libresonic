@@ -16,7 +16,7 @@ RUN (mkdir /var/libresonic &&\
 # get latest libresonic version from GitHub, check to make sure it hasn't passed the LIBRESONIC_MAJOR_VER and install libresonic.war from https://github.com/Libresonic/libresonic
 RUN (LIBRESONIC_VER="$(wget -q -O - https://api.github.com/repos/libresonic/libresonic/releases/latest | jq -r .tag_name)" &&\
   if [ "$(echo $LIBRESONIC_VER | awk -F '.' '{print $1}')" != "v${LIBRESONIC_MAJOR_VER}" ]; then echo "Latest version number is no longer ${LIBRESONIC_MAJOR_VER}"; exit 1; fi &&\
-  wget "https://github.com/Libresonic/libresonic/releases/download/${LIBRESONICVER}/libresonic-${LIBRESONICVER}.war" -O /var/libresonic/libresonic.war &&\
+  wget "https://github.com/Libresonic/libresonic/releases/download/${LIBRESONIC_VER}/libresonic-${LIBRESONIC_VER}.war" -O /var/libresonic/libresonic.war &&\
   chown libresonic:libresonic /var/libresonic/libresonic.war)
 
 # create transcode folder and add ffmpeg
