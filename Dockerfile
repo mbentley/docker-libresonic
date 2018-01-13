@@ -1,11 +1,11 @@
 FROM alpine:latest
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
-# install ca-certificates, ffmpeg, and java7
-RUN (apk --no-cache add ca-certificates ffmpeg ttf-dejavu openjdk8 wget)
+# install ca-certificates, ffmpeg, and java8
+RUN (apk --no-cache add ca-certificates ffmpeg ttf-dejavu openjdk8 wget jq)
 
-# set libresonic version
-ENV LIBRESONICVER="6.2"
+# set libresonic major version
+ENV LIBRESONIC_MAJOR_VER="6"
 
 # create libresonic user
 RUN (mkdir /var/libresonic &&\
@@ -13,8 +13,10 @@ RUN (mkdir /var/libresonic &&\
   adduser -h /var/libresonic -D -u 504 -g libresonic -G libresonic -s /sbin/nologin libresonic &&\
   chown -R libresonic:libresonic /var/libresonic)
 
-# install libresonic.war from https://github.com/Libresonic/libresonic
-RUN (wget "https://github.com/Libresonic/libresonic/releases/download/v${LIBRESONICVER}/libresonic-v${LIBRESONICVER}.war" -O /var/libresonic/libresonic.war &&\
+# get latest libresonic version from GitHub, check to make sure it hasn't passed the LIBRESONIC_MAJOR_VER and install libresonic.war from https://github.com/Libresonic/libresonic
+RUN (LIBRESONIC_VER="$(wget -q -O - https://api.github.com/repos/libresonic/libresonic/releases/latest | jq -r .tag_name)" &&\
+  if [ "$(echo $LIBRESONIC_VER | awk -F '.' '{print $1}')" != "v${LIBRESONIC_MAJOR_VER}" ]; then echo "Latest version number is no longer ${LIBRESONIC_MAJOR_VER}"; exit 1; fi &&\
+  wget "https://github.com/Libresonic/libresonic/releases/download/${LIBRESONICVER}/libresonic-${LIBRESONICVER}.war" -O /var/libresonic/libresonic.war &&\
   chown libresonic:libresonic /var/libresonic/libresonic.war)
 
 # create transcode folder and add ffmpeg
