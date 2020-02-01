@@ -1,5 +1,6 @@
-mbentley/libresonic
-===================
+# mbentley/libresonic
+
+**Note**: This repository has been deprecated in favor of [mbentley/docker-airsonic](https://github.com/mbentley/docker-airsonic).  Please update your images.
 
 docker image for libresonic (https://github.com/Libresonic/libresonic); fork of subsonic
 
